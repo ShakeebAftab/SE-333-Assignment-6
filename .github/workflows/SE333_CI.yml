@@ -8,21 +8,21 @@ jobs:
   SE333_CI_JOB:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout-repo
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: setupJava
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: "21"
           distribution: "temurin"
           architecture: x64
 
-      - name: Install Linter
+      - name: Install Checkstyle
         run: mvn checkstyle:checkstyle
 
       - name: Run Checkstyle
-        run: mvn validate
+        run: mvn checkstyle:check
 
       - name: Upload Checkstyle Result
         uses: actions/upload-artifact@v4
@@ -30,8 +30,14 @@ jobs:
           name: checkstyle-report
           path: target/site/checkstyle.html
 
-      - name: Run Maven Test
+      - name: Run Maven Tests
         run: mvn test
 
-      - name: Jacoco Report
+      - name: Generate Jacoco Report
         run: mvn jacoco:report
+
+      - name: Upload Jacoco Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco
